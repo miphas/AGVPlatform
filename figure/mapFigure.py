@@ -9,7 +9,7 @@ import sys
 sys.path.append('..')
 
 # Import setting and map2D
-import Setting as sett 
+import setting as sett 
 from map.map2D import Map2D
 
 #
