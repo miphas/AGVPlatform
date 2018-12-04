@@ -114,15 +114,15 @@ def __TestBasicDrawFunc():
     map.addFeature(Map2D.Feature(Map2D.Feature.rectangle, [50, 50, 10, 20]))
     from map.objModel import ObjModel
     mdl = ObjModel([Map2D.Feature(Map2D.Feature.ellipse, [25, 25, 40, 30, 0])], 50, 50)
-    #map2 = Map2D(50, 50)
-    map2 = mdl.getRotateModel(30)
-    print map2.m_width, map2.m_height
-    #map2.addFeature(Map2D.Feature(Map2D.Feature.ellipse, [25, 25, 40, 30, 0]))
+    map2 = Map2D(50, 50)
+    # map2 = mdl.getRotateModel(30)
+    #print map2.m_width, map2.m_height
+    map2.addFeature(Map2D.Feature(Map2D.Feature.ellipse, [25, 25, 40, 30, 0]))
     map.addSubMap(map2, 0, 0)
     # create figure
     fig = MapFigure(map)
     # 2 types of drawing
-    #fig.drawMapByFeatures()
+    # fig.drawMapByFeatures()
     fig.drawMapByGrids() # This one is slow
     fig.setXYLim(0, 200, 0, 200)
     fig.showFigure()
@@ -144,7 +144,7 @@ def __TestRadarDrawFunc():
     fig.showFigure()
 
 # 模型绘制测试
-def __TestBasicDrawFunc():
+def __TestModelDrawFunc():
     # create map
     map = Map2D(1500, 1000)
     from map.objModel import ObjModel
@@ -182,4 +182,5 @@ def __TestBasicDrawFunc():
 
 if __name__ == '__main__':
     __TestBasicDrawFunc()
-    #__TestRadarDrawFunc()
+    # __TestRadarDrawFunc()
+    # __TestModelDrawFunc()
