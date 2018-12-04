@@ -11,7 +11,8 @@ class DBSCAN:
         for i in range(1, len(radar_data)):
             sx = radar_data[i][0] - radar_pos[0]
             sy = radar_data[i][1] - radar_pos[1]
-            thr = math.sqrt(sx * sx + sy * sy) * 0.05
+            thr = math.sqrt(sx * sx + sy * sy) * 0.04
+            #thr = 90
             dx = radar_data[i][0] - radar_data[i - 1][0]
             dy = radar_data[i][1] - radar_data[i - 1][1]
             dis = math.sqrt(dx * dx + dy * dy)
@@ -62,6 +63,7 @@ if __name__ == '__main__':
 
     p1 = Split.getSingleSplitPoint(radar_data, rag[0])
     print p1
+    p2s = Split.getAroundIdx(radar_data, p1, 25)
 
 
     xs = [x[0] for x in radar_data]
@@ -76,6 +78,8 @@ if __name__ == '__main__':
         e = rag[i][1]
         fig.drawRadarPoints(xs[s : e], ys[s : e], colors[i])
     fig.drawRadarPoints(xs[p1], ys[p1], 'wo')
+    fig.drawRadarPoints(xs[p2s[0]], ys[p2s[0]], 'wo')
+    fig.drawRadarPoints(xs[p2s[1]], ys[p2s[1]], 'wo')
 
     fig.setXYLim(0, 2000, 0, 2000)
     fig.showFigure()

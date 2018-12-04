@@ -11,5 +11,10 @@ class RandomNum:
             return np.zeros(sampleNum)
         np.random.seed()
         return np.random.normal(avg, sigma, sampleNum)
+    
+    @staticmethod
+    def createRandom(cnt):
+        return np.random.random(cnt)
+
 
 
