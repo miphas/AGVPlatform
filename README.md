@@ -76,14 +76,85 @@ map = Map2D(2000, 2000)
 # 添加两个矩形障碍物
 map.addFeature(Map2D.Feature(Map2D.Feature.rectangle, [100, 500, 500, 1400]))
 map.addFeature(Map2D.Feature(Map2D.Feature.rectangle, [1400, 600, 600, 1200]))
-
 # 创建雷达类&&获取位置点
 radar = Radar2D([0, math.pi], 510, 5600, 1, 5)
 radar_pos = radar.getMeasureData(map, [1000, 0, 0])
-
+# 绘制地图
 fig = MapFigure(map)
 fig.drawMapByFeatures()
 fig.drawRadarPoints([x[0] for x in radar_pos], [x[1] for x in radar_pos], 'r.')
 fig.setXYLim(0, 2000, 0, 2000)
 fig.showFigure()
 ```
+
+**ObjModel**
+
+对象模型高级功能，支持自定义对象(矩形、椭圆、擦除)的拼接，支持对象的旋转
+在模型中，我们放置了一个汽车模型，以下是汽车模型的描述
+
+```
+    carModel = [Map2D.Feature(Map2D.Feature.ellipse, [20, 20, 40, 40, 0]), # 车尾
+                Map2D.Feature(Map2D.Feature.rectangle, [20, 0, 130, 20, 0]),
+                Map2D.Feature(Map2D.Feature.ellipse, [150, 20, 40, 40, 0]),
+                Map2D.Feature(Map2D.Feature.rectangle, [0, 20, 170, 25, 0]), 
+                Map2D.Feature(Map2D.Feature.ellipse, [45, 338, 90, 74, 0]), #车头
+                Map2D.Feature(Map2D.Feature.ellipse, [125, 338, 90, 74, 0]),
+                Map2D.Feature(Map2D.Feature.rectangle, [45, 338, 80, 37, 0]), 
+                Map2D.Feature(Map2D.Feature.erase, [0, 280, 170, 58, 0]), 
+                Map2D.Feature(Map2D.Feature.rectangle, [0, 320, 170, 18, 0]), 
+                Map2D.Feature(Map2D.Feature.rectangle, [0, 85, 20, 195, 0]), # 中间
+                Map2D.Feature(Map2D.Feature.rectangle, [150, 85, 20, 195, 0]),
+                Map2D.Feature(Map2D.Feature.rectangle, [10, 45, 10, 40, 0]), #车轮
+                Map2D.Feature(Map2D.Feature.rectangle, [150, 45, 10, 40, 0]),
+                Map2D.Feature(Map2D.Feature.rectangle, [20, 65, 130, 4, 0]),
+                Map2D.Feature(Map2D.Feature.rectangle, [10, 280, 10, 40, 0]),
+                Map2D.Feature(Map2D.Feature.rectangle, [150, 280, 10, 40, 0]),
+                Map2D.Feature(Map2D.Feature.rectangle, [20, 300, 130, 4, 0]),]
+```
+
+然后我们将该模型引入
+
+
+```
+// 该函数也在mapFigure.py文件下
+def __TestModelDrawFunc():
+    # 创建一个大地图
+    map = Map2D(1500, 1000)
+    # 引入模型类以及模型
+    from map.objModel import ObjModel
+    from map.objModel import Models
+    # 获取汽车模型
+    mdl = ObjModel(Models.carModel, 170, 375)
+	# 创建两个角度不同的汽车
+    m_car1 = mdl.getRotateModel(103)
+    m_car2 = mdl.getRotateModel(87)
+	# 将车加入地图中
+    map.addSubMap(m_car1, 0, 0)
+    map.addSubMap(m_car2, 597, -20)
+    # 创建画板
+    fig = MapFigure(map)
+	# 使用栅格绘制模型图
+    fig.drawMapByGrids() # This one is slow
+    fig.setXYLim(0, 1500, 0, 1000)
+    fig.setAspect()
+	# 获取传感器数据
+    from sensor.radar2D import Radar2D
+    radar = Radar2D([0, math.pi], 510, 800, 1, 5)
+    radar_pos = [600, 200, 0]
+    radar_data = radar.getMeasureData(map, radar_pos)
+    # 解析数据
+    xs = [x[0] for x in radar_data]
+    ys = [x[1] for x in radar_data]
+    # 画在图上
+    for dat in radar_data:
+        print dat[0], dat[1]
+    fig.drawRadarPoints(xs, ys, 'r.')
+	# 展示模型图
+    fig.showFigure()
+```
+
+**注**：绘制过程可能比较缓慢，这是由于逐个像素点绘制的原因，考虑改进方法
+
+以下是得到的绘制结果图
+
+![绘制模型](./_img/modal1.png)

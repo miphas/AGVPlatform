@@ -109,34 +109,33 @@ class MapFigure:
 
 # 画布基础测试
 def __TestBasicDrawFunc():
-    # create map
+    # 首先创建一个200x200地图
     map = Map2D(200, 200)
+    # 地图中添加一个矩形
     map.addFeature(Map2D.Feature(Map2D.Feature.rectangle, [50, 50, 10, 20]))
-    from map.objModel import ObjModel
-    mdl = ObjModel([Map2D.Feature(Map2D.Feature.ellipse, [25, 25, 40, 30, 0])], 50, 50)
+    # 创建一个50x50的另一个地图
     map2 = Map2D(50, 50)
-    # map2 = mdl.getRotateModel(30)
-    #print map2.m_width, map2.m_height
+    # 添加椭圆特征
     map2.addFeature(Map2D.Feature(Map2D.Feature.ellipse, [25, 25, 40, 30, 0]))
+    # map融合map2，把map2放到0，0位置
     map.addSubMap(map2, 0, 0)
-    # create figure
+    # 以下是画图部分
     fig = MapFigure(map)
-    # 2 types of drawing
-    # fig.drawMapByFeatures()
     fig.drawMapByGrids() # This one is slow
     fig.setXYLim(0, 200, 0, 200)
     fig.showFigure()
 
 # 激光雷达数据测试
 def __TestRadarDrawFunc():
-    # create map /mm
+    # 创建一个大地图
     map = Map2D(2000, 2000)
+    # 添加两个矩形障碍物
     map.addFeature(Map2D.Feature(Map2D.Feature.rectangle, [100, 500, 500, 1400]))
     map.addFeature(Map2D.Feature(Map2D.Feature.rectangle, [1400, 600, 600, 1200]))
-
+    # 创建雷达类&&获取位置点
     radar = Radar2D([0, math.pi], 510, 5600, 1, 5)
     radar_pos = radar.getMeasureData(map, [1000, 0, 0])
-
+    # 绘制地图
     fig = MapFigure(map)
     fig.drawMapByFeatures()
     fig.drawRadarPoints([x[0] for x in radar_pos], [x[1] for x in radar_pos], 'r.')
@@ -145,42 +144,42 @@ def __TestRadarDrawFunc():
 
 # 模型绘制测试
 def __TestModelDrawFunc():
-    # create map
+    # 创建一个大地图
     map = Map2D(1500, 1000)
+    # 引入模型类以及模型
     from map.objModel import ObjModel
     from map.objModel import Models
+    # 获取汽车模型
     mdl = ObjModel(Models.carModel, 170, 375)
-
+	# 创建两个角度不同的汽车
     m_car1 = mdl.getRotateModel(103)
     m_car2 = mdl.getRotateModel(87)
-
+	# 将车加入地图中
     map.addSubMap(m_car1, 0, 0)
     map.addSubMap(m_car2, 597, -20)
-    # create figure
+    # 创建画板
     fig = MapFigure(map)
-    # 2 types of drawing
-    #fig.drawMapByFeatures()
-
+	# 使用栅格绘制模型图
     fig.drawMapByGrids() # This one is slow
     fig.setXYLim(0, 1500, 0, 1000)
     fig.setAspect()
-
+	# 获取传感器数据
     from sensor.radar2D import Radar2D
     radar = Radar2D([0, math.pi], 510, 800, 1, 5)
     radar_pos = [600, 200, 0]
     radar_data = radar.getMeasureData(map, radar_pos)
-
+    # 解析数据
     xs = [x[0] for x in radar_data]
     ys = [x[1] for x in radar_data]
-    #print len(xs)
+    # 画在图上
     for dat in radar_data:
         print dat[0], dat[1]
     fig.drawRadarPoints(xs, ys, 'r.')
-
+	# 展示模型图
     fig.showFigure()
 
 
 if __name__ == '__main__':
-    __TestBasicDrawFunc()
-    # __TestRadarDrawFunc()
+    # __TestBasicDrawFunc()
+    __TestRadarDrawFunc()
     # __TestModelDrawFunc()
